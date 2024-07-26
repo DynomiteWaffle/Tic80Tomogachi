@@ -7,7 +7,7 @@
 // script:  js
 // saveid: Pet
 // input: gamepad
-// menu: RESET
+// menu: RESET EnterDevMenu
 
 // pmem map
 /*
@@ -28,7 +28,8 @@ const enum PetAge{
     baby,
     teen,
     adult,
-    dead
+    dead,
+    cooked
 }
 const enum PetState{
     sleeping,
@@ -80,6 +81,7 @@ interface pet {
 // init pet
 const max = 10
 var pet = {} as pet
+var menu = { inMenu: false, selected: 0, items: [] } as Imenu
 
 // init
 function BOOT() {
@@ -95,6 +97,22 @@ function BOOT() {
     pet.thirst = pmem(6)
     pet.cleanlyness = pmem(7)
     pet.happyness = pmem(8)
+
+    // specail menu times
+    if (pet.age == PetAge.cooked) {
+        trace("Cook not Needed")
+    } else {
+        menu.items.push({
+            name: "Cook",
+            action: function () {
+                trace("Used Cook")
+                pet.age = PetAge.cooked
+                menu.items.pop()
+                menu.selected =0
+                save()
+            }
+        } as menuItem)
+    }
     
     // TODO catch up on lost time
 
@@ -104,6 +122,7 @@ var button: Button = Button.none
 var lastButton: Button = Button.none
 var currentButton: Button = Button.none
 var tick = 0
+var activeMenu = menu
 
 function TIC() {
     // get button
@@ -114,17 +133,49 @@ function TIC() {
     spr(pet.type+pet.age*2, 240/2-32, 136/2-32, 14, 3, 0, 0, 2, 2)
     print(button, 84, 84)
 
+    // ingame menu
+    if (activeMenu.inMenu) {
+        // draw menu
+        const textsixe = 10
+        const yoff = activeMenu.selected*textsixe*-1
+        const xoff = 0
+        // draw all menu items
+        for (let i = 0; i < activeMenu.items.length; i++){
+            print(activeMenu.items[i].name, xoff, yoff+(i*textsixe))  
+        }
+
+
+        if (button == Button.dup) {
+            activeMenu.selected--
+            if (activeMenu.selected < 0) { activeMenu.selected =activeMenu.items.length-1}
+        }//scroll up
+        if (button == Button.ddown) {
+            activeMenu.selected++
+            if (activeMenu.selected > activeMenu.items.length - 1) { activeMenu.selected =0}
+        }//scroll down
+
+
+        if (button == Button.down) { activeMenu.items[activeMenu.selected].action()}//run action
+
+        if (button == Button.right) { activeMenu.inMenu = false }//exit
+    
+    }
+    if (button == Button.up) { activeMenu.inMenu = true } // open menu
+    
+
     
     // menu settings that use pmem
     if (resetPetB) { resetPet(); resetPetB = false }
     tick++
+    // save()
 }
 
 
 
 function MENU(i) {
-    // trace(i)
-    if(i==0){resetPetB=true}
+    trace(i)
+    if (i == 0) { resetPetB = true }// reset pet
+    if (i == 1) {activeMenu = devMenu}//enter dev menu
 }
 
 

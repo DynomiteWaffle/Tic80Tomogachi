@@ -7,7 +7,7 @@
 // script:  js
 // saveid: Pet
 // input: gamepad
-// menu: RESET
+// menu: RESET EnterDevMenu
 // pmem map
 /*
 0 - pet birth(timestamp)
@@ -34,6 +34,7 @@ const petType = [
 // init pet
 const max = 10;
 var pet = {};
+var menu = { inMenu: false, selected: 0, items: [] };
 // init
 function BOOT() {
     // check if pet has been generated
@@ -48,12 +49,29 @@ function BOOT() {
     pet.thirst = pmem(6);
     pet.cleanlyness = pmem(7);
     pet.happyness = pmem(8);
+    // specail menu times
+    if (pet.age == 5 /* PetAge.cooked */) {
+        trace("Cook not Needed");
+    }
+    else {
+        menu.items.push({
+            name: "Cook",
+            action: function () {
+                trace("Used Cook");
+                pet.age = 5 /* PetAge.cooked */;
+                menu.items.pop();
+                menu.selected = 0;
+                save();
+            }
+        });
+    }
     // TODO catch up on lost time
 }
 var button = 0 /* Button.none */;
 var lastButton = 0 /* Button.none */;
 var currentButton = 0 /* Button.none */;
 var tick = 0;
+var activeMenu = menu;
 function TIC() {
     // get button
     lastButton = currentButton;
@@ -62,18 +80,54 @@ function TIC() {
     // 240x136
     spr(pet.type + pet.age * 2, 240 / 2 - 32, 136 / 2 - 32, 14, 3, 0, 0, 2, 2);
     print(button, 84, 84);
+    // ingame menu
+    if (activeMenu.inMenu) {
+        // draw menu
+        const textsixe = 10;
+        const yoff = activeMenu.selected * textsixe * -1;
+        const xoff = 0;
+        // draw all menu items
+        for (let i = 0; i < activeMenu.items.length; i++) {
+            print(activeMenu.items[i].name, xoff, yoff + (i * textsixe));
+        }
+        if (button == 1 /* Button.dup */) {
+            activeMenu.selected--;
+            if (activeMenu.selected < 0) {
+                activeMenu.selected = activeMenu.items.length - 1;
+            }
+        } //scroll up
+        if (button == 2 /* Button.ddown */) {
+            activeMenu.selected++;
+            if (activeMenu.selected > activeMenu.items.length - 1) {
+                activeMenu.selected = 0;
+            }
+        } //scroll down
+        if (button == 6 /* Button.down */) {
+            activeMenu.items[activeMenu.selected].action();
+        } //run action
+        if (button == 8 /* Button.right */) {
+            activeMenu.inMenu = false;
+        } //exit
+    }
+    if (button == 5 /* Button.up */) {
+        activeMenu.inMenu = true;
+    } // open menu
     // menu settings that use pmem
     if (resetPetB) {
         resetPet();
         resetPetB = false;
     }
     tick++;
+    // save()
 }
 function MENU(i) {
-    // trace(i)
+    trace(i);
     if (i == 0) {
         resetPetB = true;
-    }
+    } // reset pet
+    if (i == 1) {
+        activeMenu = devMenu;
+    } //enter dev menu
 }
 function resetPet() {
     trace("Overiting Pet");
@@ -133,3 +187,83 @@ function updateButtons(last) {
     }
     return [b, c];
 }
+// test items
+menu.items.push({
+    name: "hello",
+    action: function () {
+        trace("ITEM1 Used");
+    }
+});
+menu.items.push({
+    name: "2",
+    action: function () {
+        trace("ITEM2 Used");
+    }
+});
+// dev menu
+var devMenu = { inMenu: false, selected: 0, items: [] };
+devMenu.items.push({
+    name: "PetState",
+    action: function () {
+        trace("To Dev Menu States");
+        activeMenu = devMenuStates;
+    }
+});
+devMenu.items.push({
+    name: "Normal Menu",
+    action: function () {
+        trace("To Normal Menu");
+        activeMenu = menu;
+    }
+});
+// pet states sub menu
+var devMenuStates = { inMenu: false, selected: 0, items: [] };
+devMenuStates.items.push({
+    name: "^",
+    action: function () {
+        trace("To Dev Menu");
+        activeMenu = devMenu;
+    }
+});
+devMenuStates.items.push({
+    name: "EggState",
+    action: function () {
+        trace("Set To Egg");
+        pet.age = 0 /* PetAge.egg */;
+    }
+});
+devMenuStates.items.push({
+    name: "BabyState",
+    action: function () {
+        trace("Set To Baby");
+        pet.age = 1 /* PetAge.baby */;
+    }
+});
+devMenuStates.items.push({
+    name: "TeenState",
+    action: function () {
+        trace("Set To Teen");
+        pet.age = 2 /* PetAge.teen */;
+    }
+});
+devMenuStates.items.push({
+    name: "AdultState",
+    action: function () {
+        trace("Set To Adult");
+        pet.age = 3 /* PetAge.adult */;
+    }
+});
+devMenuStates.items.push({
+    name: "DeadState",
+    action: function () {
+        trace("Set to Dead");
+        pet.age = 4 /* PetAge.dead */;
+    }
+});
+devMenuStates.items.push({
+    name: "CookedState",
+    action: function () {
+        trace("Set to Cooked");
+        pet.age = 5 /* PetAge.cooked */;
+    }
+});
