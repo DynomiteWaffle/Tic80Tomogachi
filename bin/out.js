@@ -34,6 +34,7 @@ const petType = [
 // init pet
 const max = 10;
 var pet = {};
+var inMenu = false;
 var menu = { inMenu: false, selected: 0, items: [] };
 // init
 function BOOT() {
@@ -81,7 +82,7 @@ function TIC() {
     spr(pet.type + pet.age * 2, 240 / 2 - 32, 136 / 2 - 32, 14, 3, 0, 0, 2, 2);
     print(button, 84, 84);
     // ingame menu
-    if (activeMenu.inMenu) {
+    if (inMenu) {
         // draw menu
         const textsixe = 10;
         const yoff = activeMenu.selected * textsixe * -1;
@@ -106,11 +107,11 @@ function TIC() {
             activeMenu.items[activeMenu.selected].action();
         } //run action
         if (button == 8 /* Button.right */) {
-            activeMenu.inMenu = false;
+            inMenu = false;
         } //exit
     }
     if (button == 5 /* Button.up */) {
-        activeMenu.inMenu = true;
+        inMenu = true;
     } // open menu
     // menu settings that use pmem
     if (resetPetB) {
@@ -210,6 +211,13 @@ devMenu.items.push({
     }
 });
 devMenu.items.push({
+    name: "PetType",
+    action: function () {
+        trace("To Dev Menu Types");
+        activeMenu = devMenuTypes;
+    }
+});
+devMenu.items.push({
     name: "Normal Menu",
     action: function () {
         trace("To Normal Menu");
@@ -265,5 +273,70 @@ devMenuStates.items.push({
     action: function () {
         trace("Set to Cooked");
         pet.age = 5 /* PetAge.cooked */;
+    }
+});
+// pet type submenu
+var devMenuTypes = { inMenu: false, selected: 0, items: [] };
+devMenuTypes.items.push({
+    name: "^",
+    action: function () {
+        trace("To Dev Menu");
+        activeMenu = devMenu;
+    }
+});
+devMenuTypes.items.push({
+    name: "Potato",
+    action: function () {
+        trace("Set Pet To Potato");
+        pet.type = 256 /* PetType.Potato */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Cat",
+    action: function () {
+        trace("Set Pet To Cat");
+        pet.type = 288 /* PetType.Cat */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Dog",
+    action: function () {
+        trace("Set Pet To Dog");
+        pet.type = 320 /* PetType.Dog */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Fish",
+    action: function () {
+        trace("Set Pet To Fish");
+        pet.type = 352 /* PetType.Fish */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Hamster",
+    action: function () {
+        trace("Set Pet To Hamster");
+        pet.type = 384 /* PetType.Hamster */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Lizard",
+    action: function () {
+        trace("Set Pet To Lizard");
+        pet.type = 416 /* PetType.Lizard */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Bird",
+    action: function () {
+        trace("Set Pet To Bird");
+        pet.type = 448 /* PetType.Bird */;
+    }
+});
+devMenuTypes.items.push({
+    name: "Rock",
+    action: function () {
+        trace("Set Pet To Rock");
+        pet.type = 480 /* PetType.Rock */;
     }
 });

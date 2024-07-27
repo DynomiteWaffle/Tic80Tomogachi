@@ -81,6 +81,7 @@ interface pet {
 // init pet
 const max = 10
 var pet = {} as pet
+var inMenu =  false
 var menu = { inMenu: false, selected: 0, items: [] } as Imenu
 
 // init
@@ -134,7 +135,7 @@ function TIC() {
     print(button, 84, 84)
 
     // ingame menu
-    if (activeMenu.inMenu) {
+    if (inMenu) {
         // draw menu
         const textsixe = 10
         const yoff = activeMenu.selected*textsixe*-1
@@ -157,10 +158,10 @@ function TIC() {
 
         if (button == Button.down) { activeMenu.items[activeMenu.selected].action()}//run action
 
-        if (button == Button.right) { activeMenu.inMenu = false }//exit
+        if (button == Button.right) { inMenu = false }//exit
     
     }
-    if (button == Button.up) { activeMenu.inMenu = true } // open menu
+    if (button == Button.up) { inMenu = true } // open menu
     
 
     

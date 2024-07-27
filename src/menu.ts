@@ -4,7 +4,6 @@ interface menuItem{
 }
 
 interface Imenu{
-    inMenu: boolean
     selected: number
     items:Array<menuItem>
 }
@@ -34,6 +33,13 @@ devMenu.items.push({
     action: function () {
         trace("To Dev Menu States")
         activeMenu = devMenuStates
+    }
+} as menuItem)
+devMenu.items.push({
+    name: "PetType",
+    action: function () {
+        trace("To Dev Menu Types")
+        activeMenu = devMenuTypes
     }
 } as menuItem)
 
@@ -101,5 +107,81 @@ devMenuStates.items.push({
     action: function () {
         trace("Set to Cooked")
         pet.age = PetAge.cooked
+    }
+} as menuItem)
+
+// pet type submenu
+var devMenuTypes = { inMenu: false, selected: 0, items: [] } as Imenu
+
+
+devMenuTypes.items.push({
+    name: "^",
+    action: function () {
+        trace("To Dev Menu")
+        activeMenu = devMenu
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Potato",
+    action: function () {
+        trace("Set Pet To Potato")
+        pet.type = PetType.Potato
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Cat",
+    action: function () {
+        trace("Set Pet To Cat")
+        pet.type = PetType.Cat
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Dog",
+    action: function () {
+        trace("Set Pet To Dog")
+        pet.type = PetType.Dog
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Fish",
+    action: function () {
+        trace("Set Pet To Fish")
+        pet.type = PetType.Fish
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Hamster",
+    action: function () {
+        trace("Set Pet To Hamster")
+        pet.type = PetType.Hamster
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Lizard",
+    action: function () {
+        trace("Set Pet To Lizard")
+        pet.type = PetType.Lizard
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Bird",
+    action: function () {
+        trace("Set Pet To Bird")
+        pet.type = PetType.Bird
+    }
+} as menuItem)
+
+devMenuTypes.items.push({
+    name: "Rock",
+    action: function () {
+        trace("Set Pet To Rock")
+        pet.type = PetType.Rock
     }
 } as menuItem)
